@@ -22,8 +22,8 @@ public class ListaEnlazadaAlumnos<String>  implements Secuencia<T> { //¿que ond
         this.cantNodos = 0;
     }
 
-    public int longitud() { //tampoco se si realmente la necesito, por si acaso.
-        return cantNodos;
+    public int longitud() { //en este caso si lo necesito y con esto podriamos ahorrarnos una variable que sea
+        return cantNodos;   //cantAlumnos, ya que con .longitud() lo tendriamos.
     }
 
     public void agregarAdelante(String elem){ //ahora voy a tener que agregar la direccion de memoria + el nombre de la materia.
@@ -44,7 +44,7 @@ public class ListaEnlazadaAlumnos<String>  implements Secuencia<T> { //¿que ond
             cantNodos++;   
         }
     }
-    public void eliminar() { //solo me interesa eliminar el primer elemento siempre.
+    public void eliminar() { //tampoco se si quiero eliminar un alumno de una materia, completamente irrelevante
         if(_primero.sig != null){
             _primero.sig = _primero;
             cantNodos--;
