@@ -2,8 +2,8 @@ package aed;
 
 public class SistemaSIU {
 
-    private Trie carreras;
-    private Trie alumnos;
+    private Trie<Carrera>  carreras;
+    private Trie<Integer>  alumnos;
 
     enum CargoDocente{
         AY2,
