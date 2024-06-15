@@ -1,7 +1,9 @@
+package aed;
+
 public class Carrera {
 
     private String nombre;
-    private Trie materias;
+    private Trie<Materia>  materias;
     
 
 }
