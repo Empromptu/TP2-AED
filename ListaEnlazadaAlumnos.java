@@ -12,8 +12,8 @@ public class ListaEnlazadaAlumnos<String>  implements Secuencia<T> { //¿que ond
         Nodo sig;
         //Nodo ant;
 
-        Nodo(String a){
-            alumno = a;
+        Nodo(String lu){
+            alumno = lu;
             }
     }
 
