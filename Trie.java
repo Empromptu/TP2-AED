@@ -33,79 +33,43 @@ public class Trie<T> {
         else if(ch == 'ó'){ch = 'o';}
         else if(ch == 'ú'){ch = 'u';}
     }
+
+    private int obtenerPosicion(char ch) {
+        String abecedario = " abcdefghijklmnopqrstuvwxyz";
+        String numeros = "0123456789/";
+        int res;
+        res = abecedario.indexOf(ch);
+        if(res == -1){res = numeros.indexOf(ch);} //res = -1 significa que no pertenece a abecedario y estamos
+        return res;                               //hablando de un numero entonces.
+    }
     // Método para insertar una palabra en el Trie
     public void insertar(String palabra, T valor) {
         TrieNode<T> actual = root;
         palabra.toLowerCase(); // Hasta aca ya tengo la palabra en lower
         for (int i = 0; i < palabra.length(); i++) {
-            String abecedario = " abcdefghijklmnopqrstuvwxyz";
             char ch = palabra.charAt(i);
             int posicion; //esta va a ser la posicion del indice que quiero acceder.
             if(ch == 'á' || ch == 'é' || ch == 'í' || ch == 'ó' || ch == 'ú'){reemplazar(ch);}
             // HASTA ACA YA TENGO ASEGURADISIMO QUE SON SOLO CARACTERES DEL ABECEDARIO NORMAL
-            for(i = 0; i < abecedario.length(); i++){
-                if(ch = abecedario.charAt(i)){
-                    posicion = i; //con esto ya tengo el index que quiero ver
-                }
-            }
-            if(i = palabra.length() - 1){ //ultimo elemento, tenemos que cambiar el valor a true o que se yo.
-                if(actual.hijos[posicion] == null){
-                    actual.hijos[posicion] = new TrieNode();
-                    actual = actual.hijos[posicion]; //ahora estoy en la ultima letra
-                    actual.hijos[posicion] = new TrieNode(); //creo nuevo TrieNode() desp de la letra
-                    actual._valor = valor;
-                }
-                else{
-                    actual = actual.hijos[posicion]; //estoy en el nodo de la ultima letra
-                    if(actual.hijos[posicion] == null){
-                        actual.hijos[posicion] = new TrieNode(); //creo nuevo TrieNode() desp de la letra
-                        actual = actual.hijos[posicion];
-                        actual._valor = valor;
-                    }
-                    else{
-                        actual = actual.hijos[posicion];
-                        actual._valor = valor; 
-                    }
-                }
-            }
-            //int index = (int) ch; // Convertimos el carácter a su valor ASCII ¿lo necesito en ASCII?
-            //if(index == 225 || index == 233 || index == 237 || index == 243 || index == 250){ reemplazar(index);}
-            //ya para este punto deberia tener todos los index en letras normales
-            else{
-                if (actual.hijos[posicion] == null) {
-                    actual.hijos[posicion] = new TrieNode();
-                    actual = actual.hijos[posicion];
-                }
-                else{ //si no es null, tengo que revisar si la letra que estoy viendo es null o no.
-                    actual = actual.hijos[posicion];
-                }
-            }
+            posicion = obtenerPosicion(ch);
+            if(actual.hijos[posicion] == null){actual.hijos[posicion] = new TrieNode();}
+            actual = actual.hijos[posicion];
         }
-        //actual.valor = valor; //esto se esta insertando en TODOS y no en el ultimo que vendria siendo la palabra
-        //ademas no se que mierda es valor
+        actual._valor = valor;
     }
+
     // Método para buscar una palabra en el Trie
     public T buscar(String palabra) {
         TrieNode<T> actual = root;
         palabra.toLowerCase();
         for (int i = 0; i < palabra.length(); i++) {
-            String abecedario = " abcdefghijklmnopqrstuvwxyz";
             char ch = palabra.charAt(i);
             int posicion; //esta va a ser la posicion del indice que quiero acceder.
             if(ch == 'á' || ch == 'é' || ch == 'í' || ch == 'ó' || ch == 'ú'){reemplazar(ch);}
             // HASTA ACA YA TENGO ASEGURADISIMO QUE SON SOLO CARACTERES DEL ABECEDARIO NORMAL
-            for(i = 0; i < abecedario.length(); i++){
-                if(ch = abecedario.charAt(i)){
-                    posicion = i; //con esto ya tengo el index que quiero ver
-                }
-            }
-            if (actual.hijos[posicion] == null) {
-                return null;
-            }
-            else{
-                actual = actual.hijos[posicion];
-            }
-        }
+            posicion = obtenerPosicion(ch);
+            if(actual.hijos[posicion] == null) {return null;}
+            else{actual = actual.hijos[posicion];}}
         return actual._valor;
     }
 }
