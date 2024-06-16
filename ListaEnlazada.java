@@ -1,20 +1,20 @@
 package aed;
 
-import java.util.*;
+import java.util.Iterator;
 
+public class ListaEnlazada<T> implements Iterable<T> {
 
-public class ListaEnlazada<T> implements Secuencia<T>{ //¿que onda con implements secuencia?
-    private Nodo _primero;      //si saco el implements se me jode valor y materia??
-    private Nodo _ultimo; 
-    private int cantNodos; 
+    private Nodo _primero;
+    private Nodo _ultimo;
+    private int cantNodos;
 
     private class Nodo {
-        T valor; 
+        T valor;
         Nodo sig;
-        //Nodo ant;
-        Nodo(T v){
-            valor = v; 
-            }
+
+        Nodo(T v) {
+            valor = v;
+        }
     }
 
     public ListaEnlazada() {
@@ -25,38 +25,60 @@ public class ListaEnlazada<T> implements Secuencia<T>{ //¿que onda con implemen
     public int longitud() {
         return cantNodos;
     }
-    
-    public void agregarAdelante(T elem){ 
-        if(_ultimo == null && _primero == null){
+
+    public void agregarAdelante(T elem) {
+        if (_ultimo == null && _primero == null) {
             Nodo nuevo = new Nodo(elem);
             nuevo.sig = null;
-            //nuevo.ant = null; sigo sin entender si necesitaria una lista doblemente enlazada
             _primero = nuevo;
             _ultimo = nuevo;
-            cantNodos++;   
-        }
-        else{
+            cantNodos++;
+        } else {
             Nodo nuevo = new Nodo(elem);
             nuevo.sig = _primero;
-            //nuevo.ant = null;
-            //_primero.ant = nuevo;
             _primero = nuevo;
-            cantNodos++;   
+            cantNodos++;
         }
     }
 
     public T obtener() {
         return _primero.valor;
     }
-    
-    public void eliminar() { //solo me interesa eliminar el primer elemento siempre.
-        if(_primero.sig != null){
-            _primero = _primero.sig ;
+
+    public void eliminar() {
+        if (_primero.sig != null) {
+            _primero = _primero.sig;
             cantNodos--;
-        }
-        else{
+        } else {
             _primero = _ultimo = null;
             cantNodos--;
+        }
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ListaEnlazadaIterator();
+    }
+
+    private class ListaEnlazadaIterator implements Iterator<T> {
+
+        private Nodo actual = _primero;
+
+        @Override
+        public boolean hasNext() {
+            return actual != null;
+        }
+
+        @Override
+        public T next() {
+            T valor = actual.valor;
+            actual = actual.sig;
+            return valor;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
         }
     }
 }
