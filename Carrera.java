@@ -25,8 +25,4 @@ public class Carrera {
     public void setMaterias(String nombre, Materia materia) {
         this.materias.insertar(nombre,materia);
     }
-
-    public void agregarMateria(String nombreMateria, Materia materia) {
-        this.materias.insertar(nombreMateria, materia);
-    }
 }

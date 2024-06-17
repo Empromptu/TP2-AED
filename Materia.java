@@ -9,10 +9,6 @@ public class Materia<T> {
     private ListaEnlazada<String> _alumnos;
     private ArrayList<T> _materias;
 
-    enum CargoDocente {
-        AY2, AY1, JTP, PROF
-    }
-
     public Materia() {
         this._docentes = new int[4];
         for (int i = 0; i < 4; i++) {
@@ -34,9 +30,8 @@ public class Materia<T> {
         _materias.add(materia);
     }
 
-    public void agregarDocente(CargoDocente docente) {
-        int posicion = docente.ordinal();
-        _docentes[posicion] = _docentes[posicion] + 1;
+    public void agregarDocente(int posicion) {
+        _docentes[posicion]++;
     }
 
     public void agregarAlumno(String lu) {

@@ -30,6 +30,7 @@ public class Trie<T> {
             case 'í': return 'i';
             case 'ó': return 'o';
             case 'ú': return 'u';
+            case 'ñ': return 'n';
             default: return ch;
         }
     }
@@ -47,7 +48,6 @@ public class Trie<T> {
             char ch = palabra.charAt(i);
             ch = reemplazar(ch); // Usar el carácter reemplazado
             int posicion = obtenerPosicion(ch);
-            if (posicion == -1) continue; // Ignorar caracteres no reconocidos
             if (actual.hijos[posicion] == null) {
                 actual.hijos[posicion] = new TrieNode<>();
             }
