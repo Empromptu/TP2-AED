@@ -1,6 +1,5 @@
 package aed;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -20,10 +19,6 @@ public class SistemaSIU {
         this.carreras = new Trie<>();
         this.alumnos = new Trie<>();
 
-        for (String alumno : libretasUniversitarias) {
-            alumnos.insertar(alumno, 0);
-        }
-        
         for (InfoMateria infoMateria : infoMaterias) {
             Materia materia = new Materia<>();
             for (ParCarreraMateria parCarreraMateria : infoMateria.getParesCarreraMateria()) {
@@ -31,20 +26,26 @@ public class SistemaSIU {
                 String nombreMateria = parCarreraMateria.getNombreMateria();
                 materia.setNombre(nombreMateria);
                 Carrera carreraExistente = carreras.buscar(nombreCarrera);
-                Object[] tupla = {carreraExistente, nombreMateria}; // ojo al leer la informacion
-                materia.agregarMaterias(tupla);                     // (carrera)[0] (String)[1]
-
+                
                 if (carreraExistente == null) {
                     carreraExistente = new Carrera(nombreCarrera);
+                    Object[] tupla = {carreraExistente, nombreMateria}; // ojo al leer la informacion
+                    materia.agregarMaterias(tupla);                     // (carrera)[0] (String)[1]
                     carreraExistente.setMaterias(nombreMateria, materia);
                     carreras.insertar(nombreCarrera, carreraExistente);
                 }
                 else{
+                    Object[] tupla = {carreraExistente, nombreMateria}; // ojo al leer la informacion
+                    materia.agregarMaterias(tupla);                     // (carrera)[0] (String)[1]
                     carreraExistente.setMaterias(nombreMateria, materia);
                 }
             }
         }
-
+        
+        for (String alumno : libretasUniversitarias) {
+            alumnos.insertar(alumno, 0);
+        }
+        
 
     }
 
@@ -80,8 +81,25 @@ public class SistemaSIU {
             return m.docentes();	        
     }
 
-    public void cerrarMateria(String materia, String carrera){
-    throw new UnsupportedOperationException("Método no implementado aún");	    
+    public void cerrarMateria(String materia, String carrera){ //the dificultest.
+        Materia c = this.carreras.buscar(carrera).getMaterias().buscar(materia);
+        ArrayList<Object[]> materias = new ArrayList<>();
+        ListaEnlazada<String> alumnado = c.getAlumnos();
+        materias = c.getMaterias();
+        for (int i = 0; i < materias.size(); i++) {
+            Object[] tupla = materias.get(i);
+            Carrera career = (Carrera) tupla[0];
+            String key = (String) tupla[1];
+            Trie<Materia> nodo = career.getMaterias();
+            nodo.eliminar(key); 
+            // hasta aca ya cerre la materia, me falta eliminar a todos los alumnos de la misma
+            for (int j = 0; i < alumnado.longitud(); j++) {
+                int res = alumnos.buscar(alumnado.obtener()); // valor
+                res--;
+                alumnos.insertar(alumnado.obtener(),res);
+                alumnado.eliminar(); 
+        }
+        }
     }
     
     public int inscriptos(String materia, String carrera) {
@@ -109,14 +127,16 @@ public class SistemaSIU {
     }
 
     public String[] carreras(){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        return this.carreras.getClaves();
     }
 
     public String[] materias(String carrera){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        Carrera c = this.carreras.buscar(carrera); // O(|c|)
+        Trie<Materia> m = c.getMaterias(); //Trie (donde estan las materias)
+        return m.getClaves();
     }
 
     public int materiasInscriptas(String estudiante){
-        throw new UnsupportedOperationException("Método no implementado aún");	    
+        return this.alumnos.buscar(estudiante); // O(1) ✅ chequeado por un intelectual de miller  
     }
 }

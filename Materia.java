@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Materia<T> {
 
-    private String _nombre;
+    private String _nombre; //cuando se inscribe una misma materia, se guarda el ultimo nombre inscripto?
     private int[] _docentes;
     private ListaEnlazada<String> _alumnos;
     private ArrayList<T> _materias;
@@ -46,8 +46,12 @@ public class Materia<T> {
         return _docentes;
     }
 
+    public ListaEnlazada<String> getAlumnos() {
+        return _alumnos;
+    }
     public ArrayList<T> getMaterias() {
         return _materias;
     }
+
 }
 
