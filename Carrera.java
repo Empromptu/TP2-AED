@@ -2,27 +2,28 @@ package aed;
 
 public class Carrera{
 
-    private String nombre;
-    private Trie<Materia> materias;
+    private String nombre;                 // O(1)
+    private Trie materias;                 // O(1)
 
-    public Carrera(String nombre) {
-        this.nombre = nombre;
-        this.materias = new Trie<>();
+    public Carrera(String nombre) {        // O(1)
+        this.nombre = nombre;              // O(1)
+        this.materias = new Trie();        // O(1)
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombre() {            // O(1)
+        return nombre;                     // O(1)
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombre(String nombre) { // O(1)
+        this.nombre = nombre;              // O(1)
     }
 
-    public Trie<Materia> getMaterias() {
-        return materias;
+    public Trie getMaterias() {            // O(1)
+        return materias;                   // O(1)
     }
 
-    public void setMaterias(String nombre, Materia materia) {
-        this.materias.insertar(nombre,materia);
+    public void setMaterias(String nombre, Materia materia) { // O(|m|)
+        this.materias.insertar(nombre,materia);               // O(|m|)
     }
+
 }

@@ -2,55 +2,47 @@ package aed;
 
 import java.util.ArrayList;
 
-public class Materia<T> {
+public class Materia {
 
-    private String _nombre; //cuando se inscribe una misma materia, se guarda el ultimo nombre inscripto?
-    private int[] _docentes;
-    private ListaEnlazada<String> _alumnos;
-    private ArrayList<T> _materias;
+    private int[] _docentes;                        // O(1)
+    private ArrayList<String> _alumnos;             // O(1)
+    private ArrayList<Object[]> _materias;          // O(1)
 
-    public Materia() {
-        this._docentes = new int[4];
-        for (int i = 0; i < 4; i++) {
-            _docentes[i] = 0;
+    //Constructor
+    public Materia() {                              // O(1)
+        this._docentes = new int[4];                // O(1)
+        for (int i = 0; i < 4; i++) {               // O(1)
+            _docentes[i] = 0;                       // O(1)
         }
-        _alumnos = new ListaEnlazada<>();
-        this._materias = new ArrayList<T>();
+        this._alumnos = new ArrayList<String>();    // O(1)
+        this._materias = new ArrayList<Object[]>(); // O(1)
     }
 
-    public String getNombre() {
-        return _nombre;
+    public void agregarMaterias(Object[] materia) { // O(1)
+        _materias.add(materia);                     // O(1)
     }
 
-    public void setNombre(String nombre) {
-        _nombre = nombre;
+    public void agregarDocente(int posicion) {      // O(1)
+        _docentes[posicion]++;                      // O(1)
     }
 
-    public void agregarMaterias(T materia) { //tupla<memoria,nombre>
-        _materias.add(materia);
+    public void agregarAlumno(String lu) {          // O(1)
+        _alumnos.add(lu);                           // O(1)
     }
 
-    public void agregarDocente(int posicion) {
-        _docentes[posicion]++;
+    public int cantidadAlumnos() {                  // O(1)
+        return _alumnos.size();                     // O(1)
     }
 
-    public void agregarAlumno(String lu) {
-        _alumnos.agregarAdelante(lu);
+    public int[] docentes() {                       // O(1)
+        return _docentes;                           // O(1)
     }
 
-    public int cantidadAlumnos() {
-        return _alumnos.longitud();
+    public ArrayList<String> getAlumnos() {         // O(1)
+        return _alumnos;                            // O(1)
     }
-
-    public int[] docentes() {
-        return _docentes;
-    }
-
-    public ListaEnlazada<String> getAlumnos() {
-        return _alumnos;
-    }
-    public ArrayList<T> getMaterias() {
-        return _materias;
+    public ArrayList<Object[]> getMaterias() {      // O(1)
+        return _materias;                           // O(1)
     }
 
 }

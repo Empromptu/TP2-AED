@@ -1,19 +1,19 @@
 package aed;
 
 public class ParCarreraMateria {
-    String carrera;
-    String nombreMateria;
+    String carrera;                                                  // O(1)
+    String nombreMateria;                                            // O(1)
 
-    public ParCarreraMateria(String carrera, String nombreMateria) {
-        this.carrera = carrera;
-        this.nombreMateria = nombreMateria;
+    public ParCarreraMateria(String carrera, String nombreMateria) { // O(1)
+        this.carrera = carrera;                                      // O(1)
+        this.nombreMateria = nombreMateria;                          // O(1)
     }
 
-    public String getNombreMateria() {
-        return this.nombreMateria;
+    public String getNombreMateria() {                               // O(1)
+        return this.nombreMateria;                                   // O(1)
     }
 
-    public String getCarrera() {
-        return this.carrera;
+    public String getCarrera() {                                     // O(1)
+        return this.carrera;                                         // O(1)
     }
 }

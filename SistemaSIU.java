@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class SistemaSIU {
 
-    private Trie<Carrera>  carreras;
-    private Trie<Integer>  alumnos;
+    private Trie  carreras;
+    private Trie  alumnos;
 
     enum CargoDocente{
         AY2, //3
@@ -16,16 +16,16 @@ public class SistemaSIU {
     }
 
     public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias) {
-        this.carreras = new Trie<>();
-        this.alumnos = new Trie<>();
+        this.carreras = new Trie(); // O(1)
+        this.alumnos = new Trie();  // O(1)
 
-        for (InfoMateria infoMateria : infoMaterias) {
-            Materia materia = new Materia<>();
-            for (ParCarreraMateria parCarreraMateria : infoMateria.getParesCarreraMateria()) {
+        //FALTA CALCULAR LA COMPLEJIDAD DE ESTE.
+        for (InfoMateria infoMateria : infoMaterias) { //O(c∈C Σ|c| * |Mc|)
+            Materia materia = new Materia(); // O(1)
+            for (ParCarreraMateria parCarreraMateria : infoMateria.getParesCarreraMateria()) { // O()
                 String nombreCarrera = parCarreraMateria.getCarrera();
                 String nombreMateria = parCarreraMateria.getNombreMateria();
-                materia.setNombre(nombreMateria);
-                Carrera carreraExistente = carreras.buscar(nombreCarrera);
+                Carrera carreraExistente = (Carrera) carreras.buscar(nombreCarrera);
                 
                 if (carreraExistente == null) {
                     carreraExistente = new Carrera(nombreCarrera);
@@ -42,101 +42,96 @@ public class SistemaSIU {
             }
         }
         
-        for (String alumno : libretasUniversitarias) {
-            alumnos.insertar(alumno, 0);
+        for (String alumno : libretasUniversitarias) { // O(E)
+            alumnos.insertar(alumno, (int) 0);         // O(1)
         }
         
 
     }
 
-    public void inscribir(String estudiante, String carrera, String materia) {
-        Carrera c = carreras.buscar(carrera);
-        int res = alumnos.buscar(estudiante);
-        res++;
-        alumnos.insertar(estudiante, res);
-        if (c != null) {
-            Materia m = c.getMaterias().buscar(materia);
+    public void inscribir(String estudiante, String carrera, String materia) { // O(|c| + |m|)
+        Carrera c = (Carrera) carreras.buscar(carrera);                        // O(|c|)
+        alumnos.insertar(estudiante, ((int) alumnos.buscar(estudiante)) + 1);  // O(1) tanto buscar como insertar un estudiante lo es porque esta acotado.
+        if (c != null) { //hay que revisar si no es requisito que exista la carrera per se para inscribir.
+            Materia m = (Materia) c.getMaterias().buscar(materia);
+            /*                         ||||||         ||||||||
+             *                          O(1)           O(|m|)     */
             if (m != null) {
-                m.agregarAlumno(estudiante);
+                m.agregarAlumno(estudiante);                                   // O(1)
             }
         }
 
     }
 
-    public void agregarDocente(CargoDocente cargo, String carrera, String materia){ // O(1)
-        Carrera c = carreras.buscar(carrera);
-        Materia m = c.getMaterias().buscar(materia);
-        CargoDocente _ay2 = CargoDocente.AY2;
-        CargoDocente _ay1 = CargoDocente.AY1;
-        CargoDocente _jtp = CargoDocente.JTP;
-        if(cargo.equals(_ay2)){m.agregarDocente(3);}
-        else if(cargo.equals(_ay1)){m.agregarDocente(2);}
-        else if(cargo.equals(_jtp)){m.agregarDocente(1);}
-        else {m.agregarDocente(0);}
+    public void agregarDocente(CargoDocente cargo, String carrera, String materia){ // O(|c| + |m|)
+        Materia m = (Materia) ((Carrera) carreras.buscar(carrera)).getMaterias().buscar(materia);
+        /*                                        ||||||||            ||||||       ||||||||                                            
+         *                                         O(|c|)              O(1)         O(|m|)       */
+        if(cargo.equals(CargoDocente.AY2)){m.agregarDocente(3);}           // O(1)
+        else if(cargo.equals(CargoDocente.AY1)){m.agregarDocente(2);}      // O(1)
+        else if(cargo.equals(CargoDocente.JTP)){m.agregarDocente(1);}      // O(1)
+        else {m.agregarDocente(0);}                                        // O(1)
     }
 
-    public int[] plantelDocente(String materia, String carrera){
-            Carrera c = carreras.buscar(carrera);
-            Materia m = c.getMaterias().buscar(materia);
-            return m.docentes();	        
+    public int[] plantelDocente(String materia, String carrera){ // O(|c| + |m|)
+        return ((Materia) ((Carrera) carreras.buscar(carrera)).getMaterias().buscar(materia)).docentes();
+        /*                                    ||||||||            ||||||       ||||||||         ||||||
+         *                                     O(|c|)              O(1)         O(|m|)           O(1)    */	        
     }
 
-    public void cerrarMateria(String materia, String carrera){ //the dificultest.
-        Materia c = this.carreras.buscar(carrera).getMaterias().buscar(materia);
-        ArrayList<Object[]> materias = new ArrayList<>();
-        ListaEnlazada<String> alumnado = c.getAlumnos();
-        materias = c.getMaterias();
-        for (int i = 0; i < materias.size(); i++) {
-            Object[] tupla = materias.get(i);
-            Carrera career = (Carrera) tupla[0];
-            String key = (String) tupla[1];
-            Trie<Materia> nodo = career.getMaterias();
-            nodo.eliminar(key); 
-            // hasta aca ya cerre la materia, me falta eliminar a todos los alumnos de la misma
-            for (int j = 0; i < alumnado.longitud(); j++) {
-                int res = alumnos.buscar(alumnado.obtener()); // valor
-                res--;
-                alumnos.insertar(alumnado.obtener(),res);
-                alumnado.eliminar(); 
+    public void cerrarMateria(String materia, String carrera){ // O(|c| + |m| + n∈Nm Σ|n| + Em)
+        ArrayList<Object[]> asignaturas = ((Materia) (((Carrera) this.carreras.buscar(carrera)).getMaterias()).buscar(materia)).getMaterias(); // O(|c| + |m|)
+        /*                                                             ||||||||||                ||||||           ||||||||         ||||||          
+         *                                                               O(|c|)                   O(1)             O(|m|)           O(1)       */
+        ArrayList<String> alumnado = ((Materia) (((Carrera) this.carreras.buscar(carrera)).getMaterias()).buscar(materia)).getAlumnos();       // O(|c| + |m|)
+        /*                                                             ||||||||||             ||||||           ||||||||       ||||||           
+         *                                                               O(|c|)                O(1)             O(|m|)         O(1)            */
+        for (Object[] asignatura : asignaturas) { // O(n∈Nm Σ|n|) la suma de los distintos nombres.
+            Object[] tupla = asignatura;        // O(1)
+            Carrera llave = (Carrera) tupla[0]; // O(1)
+            String valor = (String) tupla[1];   // O(1)
+            llave.getMaterias().eliminar(valor);// getMaterias() = O(1), eliminar = O(|n| = |valor|)
         }
-        }
+        for (String alumno : alumnado) {                                // O(Em) la cantidad de alumnos esta acotada por el cupo.
+            alumnos.insertar(alumno, (int) alumnos.buscar(alumno) - 1); // O(1)
+            }
     }
     
-    public int inscriptos(String materia, String carrera) {
-        Carrera c = carreras.buscar(carrera);
+    public int inscriptos(String materia, String carrera) { // O(|c| + |m|)
+        Carrera c = (Carrera) carreras.buscar(carrera); // O(|c|)
         if (c != null) {
-            Materia m = c.getMaterias().buscar(materia);
+            Materia m = (Materia) c.getMaterias().buscar(materia);
+            /*                        ||||||          ||||||||
+             *                         O(1)            O(|m|)     */
             if (m != null) {
-                int totalAlumnos = m.cantidadAlumnos();
-                return totalAlumnos;
+                return m.cantidadAlumnos();             // O(1)
             }
         }
-        return 0;
+        return 0;                                       // O(1)
     }
-
 
     public boolean excedeCupo(String materia, String carrera){ // O(|c| + |m|)
-        Carrera c = carreras.buscar(carrera);
-        Materia m = c.getMaterias().buscar(materia);
-        int[] _docentes = m.docentes();
-        int cupoPROF = _docentes[0]*250;
-        int cupoJTP = _docentes[1]*100;
-        int cupoAY1 = _docentes[2]*20;
-        int cupoAY2 = _docentes[3]*30;
-        return m.cantidadAlumnos() > cupoPROF || m.cantidadAlumnos() > cupoJTP || m.cantidadAlumnos() > cupoAY1 || m.cantidadAlumnos() > cupoAY2 ; 
+        int cantAlumnos = ((Materia) (((Carrera) this.carreras.buscar(carrera)).getMaterias()).buscar(materia)).cantidadAlumnos();
+        /*                                                ||||||||||               ||||||          ||||||||         ||||||      
+         *                                                  O(|c|)                  O(1)            O(|m|)           O(1)         */
+        int[] _docentes = ((Materia) (((Carrera) this.carreras.buscar(carrera)).getMaterias()).buscar(materia)).docentes();
+        /*                                                ||||||||||               ||||||          ||||||||       ||||||      
+         *                                                  O(|c|)                  O(1)            O(|m|)         O(1)           */ 
+        int cupoPROF = _docentes[0]*250, cupoJTP = _docentes[1]*100, cupoAY1 = _docentes[2]*20, cupoAY2 = _docentes[3]*30; // O(1)
+        return cantAlumnos > cupoPROF || cantAlumnos > cupoJTP || cantAlumnos > cupoAY1 || cantAlumnos > cupoAY2 ;         // O(1)
     }
 
-    public String[] carreras(){
-        return this.carreras.getClaves();
+    public String[] carreras(){          // O(c∈C Σ|c|)
+        return this.carreras.getClaves();// O(c∈C Σ|c|) 
     }
 
-    public String[] materias(String carrera){
-        Carrera c = this.carreras.buscar(carrera); // O(|c|)
-        Trie<Materia> m = c.getMaterias(); //Trie (donde estan las materias)
-        return m.getClaves();
+    public String[] materias(String carrera){ // O(|c| + mc∈Mc Σ|mc|)
+        return ((Carrera) this.carreras.buscar(carrera)).getMaterias().getClaves();
+        //                      ||||||||||                  ||||||        |||
+        //                        O(|c|)                     O(1)      O(mc∈Mc Σ|mc|)
     }
 
-    public int materiasInscriptas(String estudiante){
-        return this.alumnos.buscar(estudiante); // O(1) ✅ chequeado por un intelectual de miller  
+    public int materiasInscriptas(String estudiante){ // O(1)
+        return (int) this.alumnos.buscar(estudiante); // O(1) porque estudiante esta acotado 
     }
 }
