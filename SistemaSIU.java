@@ -15,29 +15,28 @@ public class SistemaSIU {
         PROF //0
     }
 
-    public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias) {
-        this.carreras = new Trie(); // O(1)
-        this.alumnos = new Trie();  // O(1)
+    public SistemaSIU(InfoMateria[] infoMaterias, String[] libretasUniversitarias) {           // O(c∈C Σ |c| * |Mc| + m∈M Σ n∈Nm Σ |n| + E)
+        this.carreras = new Trie();                                                            // O(1)
+        this.alumnos = new Trie();                                                             // O(1)
 
-        //FALTA CALCULAR LA COMPLEJIDAD DE ESTE.
-        for (InfoMateria infoMateria : infoMaterias) { //O(c∈C Σ|c| * |Mc|)
-            Materia materia = new Materia(); // O(1)
-            for (ParCarreraMateria parCarreraMateria : infoMateria.getParesCarreraMateria()) { // O()
-                String nombreCarrera = parCarreraMateria.getCarrera();
-                String nombreMateria = parCarreraMateria.getNombreMateria();
-                Carrera carreraExistente = (Carrera) carreras.buscar(nombreCarrera);
+        for (InfoMateria infoMateria : infoMaterias) {                                         // O(c∈C Σ |c| * |Mc|)
+            Materia materia = new Materia();                                                   // O(1)
+            for (ParCarreraMateria parCarreraMateria : infoMateria.getParesCarreraMateria()) { // O(m∈M Σ n∈Nm Σ |n|)
+                String nombreCarrera = parCarreraMateria.getCarrera();                         // O(1)
+                String nombreMateria = parCarreraMateria.getNombreMateria();                   // O(1)
+                Carrera carreraExistente = (Carrera) carreras.buscar(nombreCarrera);           // O(|c|)
                 
-                if (carreraExistente == null) {
-                    carreraExistente = new Carrera(nombreCarrera);
-                    Object[] tupla = {carreraExistente, nombreMateria}; // ojo al leer la informacion
-                    materia.agregarMaterias(tupla);                     // (carrera)[0] (String)[1]
-                    carreraExistente.setMaterias(nombreMateria, materia);
-                    carreras.insertar(nombreCarrera, carreraExistente);
+                if (carreraExistente == null) {                                                // O(1)
+                    carreraExistente = new Carrera(nombreCarrera);                             // O(1)
+                    Object[] tupla = {carreraExistente, nombreMateria};                        // O(1)
+                    materia.agregarMaterias(tupla);                                            // O(1)
+                    carreraExistente.setMaterias(nombreMateria, materia);                      // O(|m|)
+                    carreras.insertar(nombreCarrera, carreraExistente);                        // O(|c|)
                 }
                 else{
-                    Object[] tupla = {carreraExistente, nombreMateria}; // ojo al leer la informacion
-                    materia.agregarMaterias(tupla);                     // (carrera)[0] (String)[1]
-                    carreraExistente.setMaterias(nombreMateria, materia);
+                    Object[] tupla = {carreraExistente, nombreMateria};                        // O(1)
+                    materia.agregarMaterias(tupla);                                            // O(1)
+                    carreraExistente.setMaterias(nombreMateria, materia);                      // O(|m|)
                 }
             }
         }
@@ -45,23 +44,14 @@ public class SistemaSIU {
         for (String alumno : libretasUniversitarias) { // O(E)
             alumnos.insertar(alumno, (int) 0);         // O(1)
         }
-        
-
     }
 
     public void inscribir(String estudiante, String carrera, String materia) { // O(|c| + |m|)
-        Carrera c = (Carrera) carreras.buscar(carrera);                        // O(|c|)
         alumnos.insertar(estudiante, ((int) alumnos.buscar(estudiante)) + 1);  // O(1) tanto buscar como insertar un estudiante lo es porque esta acotado.
-        if (c != null) { //hay que revisar si no es requisito que exista la carrera per se para inscribir.
-            Materia m = (Materia) c.getMaterias().buscar(materia);
-            /*                         ||||||         ||||||||
-             *                          O(1)           O(|m|)     */
-            if (m != null) {
-                m.agregarAlumno(estudiante);                                   // O(1)
-            }
+        ((Materia) ((Carrera) carreras.buscar(carrera)).getMaterias().buscar(materia)).agregarAlumno(estudiante);
+        /*                               ||||||||         ||||||       ||||||||             ||||||
+         *                                O(|c|)           O(1)         O(|m|)               O(1)                */ 
         }
-
-    }
 
     public void agregarDocente(CargoDocente cargo, String carrera, String materia){ // O(|c| + |m|)
         Materia m = (Materia) ((Carrera) carreras.buscar(carrera)).getMaterias().buscar(materia);
@@ -98,16 +88,9 @@ public class SistemaSIU {
     }
     
     public int inscriptos(String materia, String carrera) { // O(|c| + |m|)
-        Carrera c = (Carrera) carreras.buscar(carrera); // O(|c|)
-        if (c != null) {
-            Materia m = (Materia) c.getMaterias().buscar(materia);
-            /*                        ||||||          ||||||||
-             *                         O(1)            O(|m|)     */
-            if (m != null) {
-                return m.cantidadAlumnos();             // O(1)
-            }
-        }
-        return 0;                                       // O(1)
+        return ((Materia) ((Carrera) carreras.buscar(carrera)).getMaterias().buscar(materia)).cantidadAlumnos();
+                /*                               ||||||||         ||||||       ||||||||             ||||||
+                 *                                O(|c|)           O(1)         O(|m|)               O(1)        */ 
     }
 
     public boolean excedeCupo(String materia, String carrera){ // O(|c| + |m|)

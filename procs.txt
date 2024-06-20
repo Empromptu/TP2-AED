@@ -1,0 +1,85 @@
+EJERCICIO 1.
+#######################################################################################################################################################################
+proc nuevoSistema(in infoMaterias: seq<InfoMateria>, in libretasUniversitarias: seq<string>): SistemaSIU
+requiere: no hay ningun elemento en las secuencias repetidos. Elementos dentro de infoMaterias (ParCarreraMateria) no se repiten.
+asegura: 1. todas las carreras en infoMaterias estan en el sistema. ✔
+	 2. todos los estudiantes en libretasUniversitarias estan en el sistema. ✔
+	 3. todas las materias en infoMaterias estan en el sistema. ✔
+	 4. cada materia inicializa el String de los alumnos vacio. ✔
+	 5. cada estudiante inicializa con inscripto en 0 materias. ✔
+	 6. para cada materia los docentes arrancan en 0. ✔
+	 7. para cada ParCarreraMateria, para las diversas carreras deben apuntar a una misma materia. ✔
+#######################################################################################################################################################################
+
+EJERCICIO 2.
+#######################################################################################################################################################################
+proc inscribir(inout sistema: SistemaSIU, in estudiante: string, in carrera: string, in nombreMateria: string)
+requiere: 1. carrera,estudiante,materia ∈ sistema
+	  2. estudiante NO este inscripto en la materia. (significa que puedo asumirlo)
+asegura: 1. no alteramos los inscriptos en el resto de carreras/materias que NO hagan referencia a nuestro nombreMateria. ✔
+	 2. alteramos los inscriptos en el resto de carreras/materias que SI hagan referencia a nuestro nombreMateria. ✔
+	 3. no alteramos a los estudiantes que no sean el nuestro referenciado. ✔
+	 4. nuestro estudiante referenciado esta inscripto en una nueva materia(sistema.inscripciones(estudiante) = sistema.inscripciones(estudiante) + 1). ✔
+	 5. resto de observadores no se modifican (no se toca nada del siu que no sea lo que vayamos a modificar) ✔
+#######################################################################################################################################################################
+
+EJERCICIO 3.
+#######################################################################################################################################################################
+proc inscriptos(in sistema: SistemaSIU, in carrera: string, in nombreMateria: string): ℕ
+requiere: carrera,materia ∈ sistema.
+asegura: res = |sistema.inscriptos(carrera,nombreMateria)| ✔
+#######################################################################################################################################################################
+
+EJERCICIO 4.
+#######################################################################################################################################################################
+proc agregarDocente(inout sistema: SistemaSIU, in cargo: CargoDocente, in carrera: string, in nombreMateria: string)
+requiere: carrera,materia ∈ sistema.
+asegura: 1. no alteramos el resto de cargosDocentes. ✔
+	 2. para el cargoDocente de referencia: old(sistema).docentes(cargo,carrera,nombreMateria) + 1. ✔
+	 3. no alteramos el resto de materias. ✔
+	 4. resto de observadores no se modifican (no se toca nada del siu que no sea lo que vayamos a modificar) ✔
+#######################################################################################################################################################################
+
+EJERCICIO 5.
+#######################################################################################################################################################################
+proc plantelDocente(in sistema: SistemaSIU, in carrera: string, in nombreMateria: string): seq<ℕ>
+requiere: carrera,materia ∈ sistema.
+asegura: devuelve la lista de docentes. ✔
+#######################################################################################################################################################################
+
+EJERCICIO 6.
+#######################################################################################################################################################################
+proc excedeCupo?(in sistema: SistemaSIU, in carrera: string, in nombreMateria: string): bool
+requiere: carrera,materia ∈ sistema.
+asegura: |res.inscriptos(carrera, nombreMateria)| leq cupo(sistema, carrera, nombreMateria) ✔
+#######################################################################################################################################################################
+
+EJERCICIO 7.
+#######################################################################################################################################################################
+proc carreras(in sistema: SistemaSIU): seq<string>
+asegura: devuelve todas las carreras que hay en el siu en orden lexicografico. ✔
+#######################################################################################################################################################################
+
+EJERCICIO 8.
+#######################################################################################################################################################################
+proc materias(in sistema: SistemaSIU, in carrera: string): seq<string>
+requiere: carrera ∈ sistema.
+asegura: devuelve todas las materias que hay en la carrera en orden lexicografico. ✔
+#######################################################################################################################################################################
+
+EJERCICIO 9.
+#######################################################################################################################################################################
+proc materiasInscriptas(in sistema: SistemaSIU, in estudiante: string): ℕ
+requiere: estudiante ∈ sistema.estudiantes.
+asegura: res = sistema.inscripciones(estudiante). ✔
+#######################################################################################################################################################################
+
+EJERCICIO 10.
+#######################################################################################################################################################################
+proc cerrarMateria(inout sistema: SistemaSIU, in carrera: string, in nombreMateria: string)
+requiere: estudiante,materia ∈ sistema.
+asegura: 1. elimina la referencia de la materia para todas las carreras. ✔
+	 2. se eliminan las inscripciones de los estudiantes pertenecientes a la materia. ✔
+	 3. no se alteran los estudiantes que no pertenezcan a la materia. ✔
+	 4. resto de observadores no se modifican (no se toca nada del siu que no sea lo que vayamos a modificar). ✔
+#######################################################################################################################################################################
